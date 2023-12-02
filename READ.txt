@@ -1,0 +1,352 @@
+middleware are in express : function 
+after server: recieves req, brfore client: response send  can access: req,res
+possible: chaining  can : send res
+
+method-ovveride (put,del,update http req)
+bodyParser
+express.static
+express.urlencoded
+app.use(express.urlencoded({extended:true}))
+app.use(express.static(path.join(__dirname,"/public")))
+
+error handling:
+mongodb: write sepaerate function for status codes use it whenver possible
+async : try catch , next(new ExpressError(400,"not found)) , best is ayncwrap()
+app.use((err, req, res, next) => {
+  let { status = 500, message = 'some error' } = err;
+  res.status(status).send(message);
+});
+const handleValidationErr=(err)=>{
+  console.log("validation err please check")
+  return err;
+}
+function asyncWrap(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch(next);
+  };
+}
+
+stage 0:
+basic setup: 
+    installing 
+    "ejs": "^3.1.9",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.18.2",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.0.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.0.1",
+    "uuid": "^9.0.1"
+  touch app.js
+  database setup: mongodb start the mongodb using brew 
+      app.js write basic access the modules express,mongoose connect db: wanderlust
+      create folder models for schema setup here the listing.js contains schema return promise 
+      async and await req!
+      listing.js: title,description,image,price,location,country
+      initializing database: predata : init folder: data.js already taken , index.js run into wanderlust db saves the data
+      routes: crud operation
+      index route: index.ejs GET /listings -> all listing
+      show route(read) : show.ejs  GET /listing:id 
+      new & create route (create): new.ejs [form]:GET /listings/new 
+      create route :[method-override] POST /listings (db store) thats all 
+      [update] edit and update : edit route : edit.ejs[form] GET /listings/:id/edit
+      Update Route:[method-override] PUT /listings/:id
+      Delete Route:[method-override] DELETE /listings/:id
+
+stage 1:
+      creating boiler plate
+      navbar (ejs-mate)layouts boilerplate.ejs
+      footer (ejs-mate)layouts/layouts.ejs
+      styling index.ejs using bootstrap and css
+      styling new.ejs (form)
+      styling edit.ejs (card)
+      styling show.ejs
+
+stage 2:
+      client side validation (form)
+      success and failure text
+      custom error handling
+ utils folder :
+      add wrapasync
+      add expresserror
+      error.ejs
+      validation for schema(middleware) [schema.js]  npm joi [backend]
+
+Project phase 2
+stage 1:
+      handling deletion : using mongoose middlewares
+      Query middleware is supported for the following Query functions. Query middleware executes when you call exec() or then() on a Query object, or await on a Query object.
+      In query middleware functions, this refers to the query.
+      case 1: account deleted ! all data deleted (cascading)
+      use: 2 middlewares :pre ,post
+      case 2: account deleted ! no data deleted
+      mongoose middlewares : pre , post
+      
+      create review model : cooment(string) , ratings(1 to 5), createdAt(date,time)
+      create reviews:
+      submmiting form -> review added
+      POST: /listings/:id/reviews
+      
+      validation for reviews
+      render reviews
+      styling reviews
+      deleting reviews:  reviews -> FROM  LISTINGS, 
+        deleting reviews:  LISTINGS  USING mongoose middlewares : pre , post, 
+      handling delete listing
+
+stage 2:
+      express router ?
+      using express router
+      restructuring listings
+      restructuring reviews
+      web cookies
+      sending cookies 
+      cookie parser 
+      signed cookies
+
+stage 3: 
+        state ? 
+        express session
+        exploring session options
+        storing & using session info 
+        using connect-flash
+        using res.locals
+        implement session :  cookie-parser
+        cookie in session options: express-session: npm : cookie.expires, cookie.maxAge
+        implement flash:
+        
+        app.js :
+        app.use(flash());
+        app.use(flash());
+        app.use((req,res,next)=>{
+          res.locals.success=req.flash("success");
+          next()
+          })
+      
+        listing.js
+        req.flash("success"," New Listing Created !")
+        views/index.ejs
+        <h1><%=success%></h1>
+
+        flash success includes 
+        
+        flash failure includes
+
+stage 4: 
+        authentication vs autorization
+        gow passwords are stored
+        what is hashing
+        what is salting
+        passport ?
+                Authentication : verify someone [signup/login]
+                Authorization: verify what all can this person  can access [ specific files,data] ex: user created review can delete 
+                storing passwords: hashed form 
+
+                hashing: sha 256 , crc, md5
+                every input -> fixed output
+                one way function ! input to output 
+                ex: modulus function  in js math.abs()
+                different input ->different  output of same length
+                small change in input -> large change in output
+
+                salting : secure way of storing password adds string of 32 or more character and then hashing them
+
+                authentication: npm i passport [salting + hashing]
+                npm install passport-local
+                npm install passport    
+                npm install passport-local-mongoose
+
+        create user model [user.js]
+                [username, password ]default , email [passport-local-mongoose]
+        configuring strategy
+                  middlware initializing passport
+                  middlware  passport session : same user browsing the site [multiple pages]
+                  authenticate() Generates a function that is used in Passport's LocalStrategy
+            app.js [app.use]
+              passport.initialize()
+              passport.session()
+              passport.use(new LocalStrategy(User. authenticate() ))
+              passport.serializeUser(User.serializeUser()); user session store 
+              passport.deserializeUser(User.deserializeUser()); user session remove 
+        demo user
+        signup user - GET
+        signup user POST
+        LOGIN user
+
+  
+  Stage 5 Tasks                
+
+║ 1. Connect the Login Route           
+║ 2. Implement Logout Functionality    
+║    for Users                         
+║ 3. Add Styling to Enhance UI         
+║                                      
+║ 4. Enable Login After Signup Process  
+║                                     
+║ 5. Develop the Post-Login Page       
+║                                     
+║ 6. Set Up Authorization for Listing 
+║    Owners:                          
+║    - Authorization for `/LISTINGS`  
+║    - Authorization for `/reviews`    
+
+        1. Connect the Login Route : 
+                  add fuction that !  without logedd in cannot create a new listing 
+                  2: how to check user loggeed in or not ?
+                  passport : req.isAuthenticated() methods helps!
+
+                  so in new route : we check the above case
+
+        2.
+        logout:
+              get : /logout 
+
+        passport has logout
+                users.js
+                implement logout
+
+                style: req.user: undefined : signup/login or req.user: logout 
+                miidleware.js
+                req.user implement
+
+                once signup: direct login (case)
+                passport has login
+                users.js
+
+                after logged in redirect to original page the user trying to access
+                ex: say i loggged in for new listing it should redirect to new listing page instead home page
+                console.log(req.path,"..",req.originalUrl); see middleware.js 
+                problem with passport : when u login that router.post("/login): logged in success
+                by default req.session.redirectUrl resets i mean deletes
+                so save in res.locals so passort has no access to locals so create a another modules
+                middleware.js  
+
+                problem: when i didnt click any  links/path direct login it leads to page not found
+                check condition 
+
+      Set Up Authorization for Listing 
+      ║    Owners: can delete ,edit update review this done only by that person not all 
+          first define the owner in listing schema  ie models/listings.js
+          but in the database already present  data : reinitialze what i mean is 
+          init/data.js has predefine data are present now i want to add owner column
+          manually not possible
+          better  way :
+          index.js before insert 
+          
+          //Show Route  .populate("owner");
+          whenever ur creating new listing we need to fix owner name
+          //create route 
+          newlisting.owner=req.user._id
+          
+      - Authorization for `/LISTINGS`  
+              show.ejs
+                now lets hide the edit and delete if its not owner
+                1. listing owner ? res.user._id
+                2. edit/delete user ? cuurentuser: res.locals.curUser=req.user;
+                compare (curUser id == res.user._id) edit delete visbile
+                
+                hiding only help fronend user access if user trying to access via hopscotch or 
+                javascript we need to make sure authorized user can make changes
+
+                //Update Route
+                await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+                findByIdAndUpdate : lets sepaerate each firtly findById then Update 
+                so after finding id we will check the user is owner then update
+
+                f(!listing.owner.equals(curUser._id)){
+                req.flash("error","  You don't have access to update !")
+                return  res.redirect(`/listings/${id}`);
+                }
+
+                using the above in each for edit delete and all lets create in middleware.js
+
+      ║    - Authorization for `/reviews`   
+              each review should have author only they can delete the reviews 
+              
+              author:{
+              type: Schema.Types.ObjectId,
+              ref:"User"
+            }
+
+            to leave a comment user must be logged in that is handled in show .ejs form review
+            even the backend also need to handled so using post man or any other they cant delete it
+            isloggedIn middleware apply for review route
+            
+            const listing = await Listing.findById(id)
+              .populate({path:"reviews",
+              populate:{path:"author"},
+            }).populate("owner"); in listisng.js
+          
+            firstly autor must be have account  in before delete comment---
+
+    ________________________________________+________________________________________
+
+    Project phase 3 : PRODUCTION 
+    stage 1: 
+          MVC ARCHITECTURE [STRUCTURING THE CODE]
+          REVIEWS: STARS [starability.CSS]
+          IMAGE UPLOAD : 
+              STAGE A : WHERE USE LOCAL STORAGE WITH IN THE FOLDER OF THE PROJECT 
+              STAGE B:  USE CLOUD TO STORE IMAGES AND ACCESS VIA links
+              STAGE C:  UPLOAD ON MONGO DB
+          PROBLEM : FILES CAN'T BE SENT TO BACKEND , STORAGE PROBLEM : RESOLVE USING CLOUD [STORE FILES]  STORE : MONGO DB LINK
+          
+        STAGE A : WHERE USE LOCAL STORAGE WITH IN THE FOLDER OF THE PROJECT 
+          FILES : SEND FROM FRONTEND TO BACKEND 
+              MANIPULATE FORM 
+                  enctype:"multipart/form data"  s add in form 
+                  // the output when i create a new form an empty {} obj return becoz it cannot parse the file 
+                  router.post("/",(req,res)=>{
+                        res.send(req.body)
+                      });
+              Solution: npm i multer
+              const multer =require("multer");
+              const upload = multer({dest: "uploads/"});      
+
+              to use this  app.post(,upload.single('listing[image])) : this means uploading inside listing image  return req.file
+
+      STAGE B:  USE CLOUD TO STORE IMAGES AND ACCESS VIA links
+
+        USED APP : CLOUDINARY WEBSITE Signup
+            CREATE Cloudinaryenv.js : to acces cloud 
+            Create : .env file : store : api key name enctype, secret keys etc 
+            to access  to my app.js project: i need to install [npm i dotenv]
+        app.js
+            if(process.env.NODE_ENV != "production"){
+              require("dotenv").config()
+            }
+              .env 
+          CLOUD_NAME, CLOUD_API_KEY,CLOUD_API_KEY_SECRET codes from cloud 
+
+          to store into cloud easily 
+          install: Cloudinary multer-storage-Cloudinary, npm i cloudinary
+          Cloudinaryenv.js : to acces cloud 
+              const cloudinary = require('cloudinary').v2;
+              const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+          we will use the above cloudinary,storage in listing.js
+
+stage 2:
+   1. edit image listing 
+   2. image preview in edit 
+   3. maps 
+   4. geocoding
+   5. storing coordinates
+   6.map marker 
+   7. map popup
+   
+     we want a preview to know what was the previuos image so if we wish to upload or not 
+       3. maps 
+     google maps api alternative https://www.mapbox.com/
+      4. geocoding
+        convert address into latitude and longitude which u can use to place markers on a map or position the map
+        here i used: openstreetmap, leaflet
+        https://docs.mapbox.com/mapbox-gl-js/example/add-a-marker/
+
+  stage 3:
+  
+    mongo-session-store:
+    default : storage cookies/session memory store
+
+  deployment: free cloud : 
+  render,netlify,cyclic

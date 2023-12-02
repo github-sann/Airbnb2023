@@ -1,0 +1,61 @@
+<!-- Adding missing layout inclusion -->
+<% layout('/layouts/boilerplate') -%>
+<body>
+  <div class="row">
+    <div class="col-8 offset">
+      <h3>Edit your Listing</h3>
+      <form class="needs-validation formedit" method="POST" action="/listings/<%= listing._id %>?_method=PUT" enctype="multipart/form-data" novalidate>
+        <!-- Title Field -->
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+           <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" />
+        </div>
+
+        <!-- Other Fields - Description, Image, Price, Country, Location -->
+        <!-- Keep the value attribute to pre-fill, but remove 'required' -->
+        
+        <!-- Description Field -->
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea name="listing[description]" class="form-control"><%= listing.description %></textarea>
+        </div>
+       
+        <div class="mb-3">
+          <label for="image" class="form-label"> Preview Image</label>
+          <div style="height: 200px; width: 200px; border: 2px solid #ccc; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+              <img src="<%= listing.image.url %>" alt="Original Listing Image" class="img-fluid d-block w-100 h-100" style="object-fit: cover; transition: border-color 0.3s ease;">
+          </div>
+      </div>
+      
+        
+        <div class="mb-3">
+          <label for="image" class="form-label"> Upload Image</label>
+          <input name="listing[image]" type="file" class="form-control"  />
+          
+         </div>
+        <!-- Price and Country Fields -->
+        <div class="row">
+          <!-- Price Field -->
+          <div class="mb-3 col-md-4">
+            <label for="price" class="form-label">Price</label>
+            <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" />
+          </div>
+          <!-- Country Field -->
+          <div class="mb-3 col-md-8">
+            <label for="country" class="form-label">Country</label>
+            <input name="listing[country]" value="<%= listing.country %>" type="text" class="form-control" />
+          </div>
+        </div>
+
+        <!-- Location Field -->
+        <div class="mb-3">
+          <label for="location" class="form-label">Location</label>
+          <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" />
+        </div>
+
+        <!-- Edit Button -->
+        <button class="btn btn-dark mb-3 addbtn">Edit</button>
+      </form>
+    </div>
+  </div>
+</body>
