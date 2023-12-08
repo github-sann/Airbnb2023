@@ -102,8 +102,9 @@ app.use((req,res,next)=>{
 
 
 
+
 app.use("/listings", listings);
-app.use("listings/:id/reviews", reviews); 
+app.use("/listings/:id/reviews", reviews); 
 app.use("/",users);
 
 app.all("*",(req,res,next)=>{
