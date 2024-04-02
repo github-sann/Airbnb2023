@@ -1,4 +1,4 @@
-# Airbnb Project - Phase 1 [Visit this Site](https://flixx-hy4c.onrender.com)
+# Airbnb Project - Phase 1 [Airbnb](https://airbnb-fl9w.onrender.com)
 
 ## Description
 
